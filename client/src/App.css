@@ -16,6 +16,8 @@ ul {
   list-style: none;
 }
 
+
+
 .symbol-color{
   color: #83ff5c;
 }
@@ -857,6 +859,12 @@ pre {
   ****************************************
 
 */
+
+pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow: auto;
+}
 .write-page{
   width: 90%;
   margin: auto;

@@ -6,7 +6,7 @@ const Write = () => {
     const textRef = useRef(null);
     const [imageName, setImageName] = useState();
     const [category, setCategory] = useState("#");
-
+    const categoryRef = useRef(null);
     const changeTitle = useCallback((e) => {
         setTitle(e.target.value);
     }, []);
@@ -49,12 +49,15 @@ const Write = () => {
     },[]);
 
     const changeCategory = useCallback((e) => {
+
         setCategory(e.target.value);
+        console.log(e.target.value)
+        console.log(category)
     }, []);
 
-    const handleBeforeInput = (e) => {
+    const handleBeforeInput = useCallback((e) => {
         document.execCommand('FormatBlock', false, '<pre>')
-    }
+    }, []);
 
     const changeStyle = (e) => {
         if(textRef.current){
@@ -63,6 +66,24 @@ const Write = () => {
             textRef.current.focus();
         }
     }
+
+    const handleSubmit = useCallback( async () => {
+        console.log(category)
+        if(category === "#"){
+            alert("카테고리를 설정해주세요");
+            categoryRef.current.focus();
+        }else{
+            const content = document.getElementById("editor").innerHTML;
+            await axios.post('api/write', {
+                title: title,
+                content: content,
+                category: category
+            }).then((response) => {
+
+            });
+        }
+    }, [category])
+
     return (
         <>
   <div className="write-page">     
@@ -71,8 +92,8 @@ const Write = () => {
   </div>
   <hr />
   <div className="write-category">
-    <select className="back-color symbol-color" name="category"value={category} onChange={changeCategory}>
-      <option value="" selected disabled hidden >카테고리</option>
+    <select className="back-color symbol-color" ref={categoryRef} name="category"value={category} onChange={changeCategory}>
+      <option value="#"  >카테고리</option>
       <option value="meetingnote">회의록</option>
       <option value="project">프로젝트</option>
       <option value="web">Web</option>
@@ -83,8 +104,8 @@ const Write = () => {
   </div> 
   <div className="write-btn">
       <button className="back-color" id="btnBigFont"  onClick={changeFont} data-size={"7"}>대</button>
-      <button className="back-color" id="btnMiddleFont"  onClick={changeFont} data-size={"7"}>중</button>
-      <button className="back-color" id="btnSmallFont"  onClick={changeFont} data-size={"7"}>소</button>
+      <button className="back-color" id="btnMiddleFont"  onClick={changeFont} data-size={"5"}>중</button>
+      <button className="back-color" id="btnSmallFont"  onClick={changeFont} data-size={"3"}>소</button>
 
       <button className="back-color" id="btnBold" data-style={"bold"} onClick={changeStyle}><b>B</b></button>
       <button className="back-color" id="btnItalic" data-style={"italic"} onClick={changeStyle}><span style={{fontStyle: "italic"}}>I</span></button>
@@ -97,13 +118,13 @@ const Write = () => {
 
     </div>
 
-  <div contentEditable={true} ref={textRef } className="write-contents" data-text="텍스트를 입력하세요." id="editor"  onInputCapture={handleBeforeInput}>
+  <div contentEditable={true} ref={textRef } className="write-contents" data-text="텍스트를 입력하세요." id="editor"  onBeforeInput={handleBeforeInput}>
 
   </div>
 
   <div className="last-button">
     <button >임시저장</button>
-    <button className="complete-button">저장하기</button>
+    <button className="complete-button" onClick={handleSubmit}>저장하기</button>
   </div>
 
   </div>
