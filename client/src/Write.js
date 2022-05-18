@@ -1,32 +1,49 @@
+
 import axios from "axios";
 import {useRef, useState, useCallback} from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import {faImage} from "@fortawesome/free-regular-svg-icons";
 
 const Write = () => {
-    const [title, setTitle] = useState("");
+    // editor ref
     const textRef = useRef(null);
-    const [imageName, setImageName] = useState();
-    const [category, setCategory] = useState("#");
+    // category에 focus를 주기 위한 ref
     const categoryRef = useRef(null);
+    const [category, setCategory] = useState("#");
+    const [title, setTitle] = useState("");
+
+    // title 함수
     const changeTitle = useCallback((e) => {
         setTitle(e.target.value);
     }, []);
 
-    const changeFont = (e) => {
+    // font size 함수
+    const changeFont = useCallback((e) => {
+      e.preventDefault();
         if(textRef.current){
-            const size = e.target.dataset.size;
-            
+            const size = e.currentTarget.dataset.size;
             document.execCommand("fontSize", false, size);
             textRef.current.focus();
         }
-        
-    }
+    }, [textRef]);
 
+    // font style 함수
+    const changeStyle = useCallback((e) => {
+      e.preventDefault();
+      if(textRef.current){
+          document.execCommand('styleWithCSS', false, true);
+          const style = e.currentTarget.dataset.style;
+          console.log(style)
+          document.execCommand(style, false, "");
+          textRef.current.focus();
+      }
+  },[textRef]);
+
+    // 이미지 처리함수  
     const handleChangeImage = useCallback(async (e) => {
         e.preventDefault();
         if(e.target.files){
             const uploadFile = e.target.files[0];
-            const fileName = e.target.files[0].name;
-            setImageName(fileName)
             const formData = new FormData();
             formData.append('files', uploadFile);
             console.log(formData)
@@ -40,33 +57,30 @@ const Write = () => {
             }).then((response) => {
                 console.log(response)
                 if(textRef.current){
-                    textRef.current.focus();
+                    
                     document.execCommand('insertHTML', false, `<img src="${process.env.PUBLIC_URL + `/images/${response.data}`}" title="image" />`)
+                    textRef.current.focus();
                 }
             })
             
         }
     },[]);
 
+    // 카테고리 함수
     const changeCategory = useCallback((e) => {
 
         setCategory(e.target.value);
         console.log(e.target.value)
         console.log(category)
-    }, []);
+    }, [category]);
 
+    // <pre>태그를 자동으로 붙이기위해 만든 함수
     const handleBeforeInput = useCallback((e) => {
         document.execCommand('FormatBlock', false, '<pre>')
     }, []);
 
-    const changeStyle = (e) => {
-        if(textRef.current){
-            const style = e.target.dataset.style;
-            document.execCommand(style);
-            textRef.current.focus();
-        }
-    }
-
+ 
+    // 저장 관련 처리
     const handleSubmit = useCallback( async () => {
         console.log(category)
         if(category === "#"){
@@ -82,13 +96,13 @@ const Write = () => {
 
             });
         }
-    }, [category])
+    }, [category, title]);
 
     return (
         <>
   <div className="write-page">     
   <div className="write-title">
-      <input style={{color: "black"}} className="back-color" type="text" id="title" placeholder="제목을 입력하세요" value={title} onChange={changeTitle}/>
+      <input  className="back-color" type="text" id="title" placeholder="제목을 입력하세요" value={title} onChange={changeTitle}/>
   </div>
   <hr />
   <div className="write-category">
@@ -113,7 +127,7 @@ const Write = () => {
 
       <button className="back-color" >"</button>
       <button className="back-color symbol-color">링크</button>
-      <button  className="back-color" id="btnImage"><i style={{fontSize: "20px"}} className="far fa-image"></i></button>
+      <button  className="back-color" id="btnImage"><FontAwesomeIcon icon={faImage} /></button>
       <input  className="image-selector" id="imgSelector" type="file" accept="image/*" onChange={handleChangeImage} />
 
     </div>
@@ -134,3 +148,4 @@ const Write = () => {
 };
 
 export default Write;
+

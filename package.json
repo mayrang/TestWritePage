@@ -17,5 +17,8 @@
     "mysql": "^2.18.1",
     "nodemon": "^2.0.16",
     "sqlite3": "^5.0.8"
+  },
+  "devDependencies": {
+    "react-error-overlay": "^6.0.9"
   }
 }

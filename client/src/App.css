@@ -860,11 +860,16 @@ pre {
 
 */
 
+
+
 pre {
   white-space: pre-wrap;
   word-break: break-all;
   overflow: auto;
 }
+
+
+
 .write-page{
   width: 90%;
   margin: auto;
@@ -912,11 +917,23 @@ pre {
   padding: 20px 10px;
   border: 1px solid white; 
   border-radius: 4px;
+  height: 500px;
+  overflow: scroll;
 
 
 }
 
+#editor img { 
+  display:block;
+	max-width:80%;
+	max-height:80%;
+  
+}
 
+#title {
+  font-family: 'Roboto';
+  color : white;
+}
 
 
 /* 게시판 css */
